@@ -1,0 +1,37 @@
+# Logs, temporary files, dan file sensitif
+logs/*.log
+logs/*.txt
+
+# Upload files (user-uploaded content)
+img/logo*.png
+img/logo*.jpg
+img/logo*.gif
+img/logo*.jpeg
+img/logo*.webp
+
+# Voucher template user
+voucher/temp.php
+voucher/template.php
+voucher/template-small.php
+voucher/template-thermal.php
+
+# Config (berisi credential MikroTik — JANGAN di-commit)
+include/config.php
+
+# Test results
+test/results/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# PHP temporary / cache files
+*.cache
