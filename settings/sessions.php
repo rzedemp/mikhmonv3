@@ -26,7 +26,7 @@ if (!isset($_SESSION["mikhmon"])) {
   $color = array('1' => 'bg-blue', 'bg-indigo', 'bg-purple', 'bg-pink', 'bg-red', 'bg-yellow', 'bg-green', 'bg-teal', 'bg-cyan', 'bg-grey', 'bg-light-blue');
 
   if (isset($_POST['save'])) {
-
+    csrf_verify();
     $suseradm = ($_POST['useradm']);
     $spassadm = encrypt($_POST['passadm']);
     $logobt = ($_POST['logobt']);
@@ -42,12 +42,13 @@ if (!isset($_SESSION["mikhmon"])) {
       file_put_contents("./include/config.php", "$newcontent");
     }
 
+    write_audit_log($_SESSION['mikhmon'] ?? 'admin', 'UPDATE_ADMIN_SETTINGS', 'Updated admin username/password');
   
-  $gen = '<?php $qrbt="' . $qrbt . '";?>';
-          $key = './include/quickbt.php';
-          $handle = fopen($key, 'w') or die('Cannot open file:  ' . $key);
-          $data = $gen;
-          fwrite($handle, $data);
+    $gen = '<?php $qrbt="' . $qrbt . '";?>';
+    $key = './include/quickbt.php';
+    $handle = fopen($key, 'w') or die('Cannot open file:  ' . $key);
+    $data = $gen;
+    fwrite($handle, $data);
     echo "<script>window.location='./admin.php?id=sessions'</script>";
   }
 
@@ -60,7 +61,8 @@ if (!isset($_SESSION["mikhmon"])) {
     x.type = 'text';
     } else {
     x.type = 'password';
-    }}
+    }
+  }
 </script>
 
 <div class="row">
@@ -118,6 +120,7 @@ if (!isset($_SESSION["mikhmon"])) {
         </div>
 			    <div class="col-6">
           <form autocomplete="off" method="post" action="">
+            <?php echo csrf_field(); ?>
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title"><i class="fa fa-user-circle"></i> <?= $_admin ?></h3>
@@ -177,7 +180,43 @@ if (!isset($_SESSION["mikhmon"])) {
 </div>
 </div>
 <script>
-  var _0x7470=["\x68\x6F\x73\x74\x6E\x61\x6D\x65","\x6C\x6F\x63\x61\x74\x69\x6F\x6E","\x2E","\x73\x70\x6C\x69\x74","\x6D\x69\x6B\x68\x6D\x6F\x6E\x2E\x6F\x6E\x6C\x69\x6E\x65","\x78\x62\x61\x6E\x2E\x78\x79\x7A","\x6C\x6F\x67\x61\x6D\x2E\x69\x64","\x6D\x69\x6E\x69\x73\x2E\x69\x64","\x69\x6E\x64\x65\x78\x4F\x66","\x3C\x73\x70\x61\x6E\x20\x3E\x3C\x69\x20\x63\x6C\x61\x73\x73\x3D\x22\x74\x65\x78\x74\x2D\x77\x68\x69\x74\x65\x20\x66\x61\x20\x66\x61\x2D\x69\x6E\x66\x6F\x2D\x63\x69\x72\x63\x6C\x65\x22\x3E\x3C\x2F\x69\x3E\x20\x3C\x61\x20\x63\x6C\x61\x73\x73\x3D\x22\x74\x65\x78\x74\x2D\x62\x6C\x75\x65\x22\x20\x68\x72\x65\x66\x3D\x22\x2E\x2F\x61\x64\x6D\x69\x6E\x2E\x70\x68\x70\x3F\x69\x64\x3D\x61\x62\x6F\x75\x74\x22\x3E\x43\x68\x65\x63\x6B\x20\x55\x70\x64\x61\x74\x65\x3C\x2F\x61\x3E\x3C\x2F\x73\x70\x61\x6E\x3E","\x68\x74\x6D\x6C","\x23\x6E\x65\x77\x56\x65\x72","\x68\x74\x74\x70\x73\x3A\x2F\x2F\x72\x61\x77\x2E\x67\x69\x74\x68\x75\x62\x75\x73\x65\x72\x63\x6F\x6E\x74\x65\x6E\x74\x2E\x63\x6F\x6D\x2F\x6C\x61\x6B\x73\x61\x31\x39\x2F\x6D\x69\x6B\x68\x6D\x6F\x6E\x76\x33\x2F\x6D\x61\x73\x74\x65\x72\x2F\x76\x65\x72\x73\x6F\x6E\x2E\x74\x78\x74\x3F\x74\x3D","\x72\x61\x6E\x64\x6F\x6D","\x66\x6C\x6F\x6F\x72","\x76","\x76\x65\x72\x73\x69\x6F\x6E","","\x72\x65\x70\x6C\x61\x63\x65","\x69\x6E\x6E\x65\x72\x48\x54\x4D\x4C","\x6C\x6F\x61\x64\x56","\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64","\x20","\x75\x70\x64\x61\x74\x65\x64","\x2D","\x4E\x65\x77\x20\x56\x65\x72\x73\x69\x6F\x6E\x20","\x3C\x62\x72\x3E\x3C\x73\x70\x61\x6E\x20\x3E\x3C\x69\x20\x63\x6C\x61\x73\x73\x3D\x22\x74\x65\x78\x74\x2D\x77\x68\x69\x74\x65\x20\x66\x61\x20\x66\x61\x2D\x69\x6E\x66\x6F\x2D\x63\x69\x72\x63\x6C\x65\x22\x3E\x3C\x2F\x69\x3E\x20\x3C\x61\x20\x63\x6C\x61\x73\x73\x3D\x22\x74\x65\x78\x74\x2D\x62\x6C\x75\x65\x22\x20\x68\x72\x65\x66\x3D\x22\x2E\x2F\x61\x64\x6D\x69\x6E\x2E\x70\x68\x70\x3F\x69\x64\x3D\x61\x62\x6F\x75\x74\x22\x3E\x43\x68\x65\x63\x6B\x20\x55\x70\x64\x61\x74\x65\x3C\x2F\x61\x3E\x3C\x2F\x73\x70\x61\x6E\x3E","\x67\x65\x74\x4A\x53\x4F\x4E"];var hname=window[_0x7470[1]][_0x7470[0]];var dom=hname[_0x7470[3]](_0x7470[2])[1]+ _0x7470[2]+ hname[_0x7470[3]](_0x7470[2])[2];var domArray=[_0x7470[4],_0x7470[5],_0x7470[6],_0x7470[7]];var a=domArray[_0x7470[8]](hname);var b=domArray[_0x7470[8]](dom);if(dom== _0x7470[4]){$(_0x7470[11])[_0x7470[10]](_0x7470[9])}else {if(a> 0|| b> 0){}else {$[_0x7470[27]](_0x7470[12]+ (Math[_0x7470[14]]((Math[_0x7470[13]]()* 999999999)+ 1))* 128,function(_0xc1b4x6){getNewVer= (_0xc1b4x6[_0x7470[16]])[_0x7470[3]](_0x7470[15])[1];var _0xc1b4x7=parseInt(getNewVer[_0x7470[18]](_0x7470[2],_0x7470[17]));var _0xc1b4x8=document[_0x7470[21]](_0x7470[20])[_0x7470[19]];var _0xc1b4x9=(_0xc1b4x8[_0x7470[3]](_0x7470[22])[0])[_0x7470[3]](_0x7470[15])[1];var _0xc1b4xa=parseInt(_0xc1b4x9[_0x7470[18]](_0x7470[2],_0x7470[17]));var _0xc1b4xb=(_0xc1b4x7- _0xc1b4xa);getNewVer= (_0xc1b4x6[_0x7470[16]])[_0x7470[3]](_0x7470[15])[1];var _0xc1b4x7=parseInt(getNewVer[_0x7470[18]](_0x7470[2],_0x7470[17]));var _0xc1b4x8=document[_0x7470[21]](_0x7470[20])[_0x7470[19]];var _0xc1b4x9=(_0xc1b4x8[_0x7470[3]](_0x7470[22])[0])[_0x7470[3]](_0x7470[15])[1];var _0xc1b4xa=parseInt(_0xc1b4x9[_0x7470[18]](_0x7470[2],_0x7470[17]));var _0xc1b4xb=(_0xc1b4x7- _0xc1b4xa);getNewD= (_0xc1b4x6[_0x7470[23]])[_0x7470[3]](_0x7470[22])[0];newD= parseInt((getNewD)[_0x7470[3]](_0x7470[24])[2]+ (getNewD)[_0x7470[3]](_0x7470[24])[0]+ (getNewD)[_0x7470[3]](_0x7470[24])[1]);var _0xc1b4xc=parseInt((_0xc1b4x8[_0x7470[3]](_0x7470[22])[1])[_0x7470[3]](_0x7470[24])[2]+ (_0xc1b4x8[_0x7470[3]](_0x7470[22])[1])[_0x7470[3]](_0x7470[24])[0]+ (_0xc1b4x8[_0x7470[3]](_0x7470[22])[1][_0x7470[3]](_0x7470[24]))[1]);var _0xc1b4xd=(newD- _0xc1b4xc);if(_0xc1b4xb> 0|| _0xc1b4xd> 0){$(_0x7470[11])[_0x7470[10]](_0x7470[25]+ _0xc1b4x6[_0x7470[16]]+ _0x7470[22]+ _0xc1b4x6[_0x7470[23]]+ _0x7470[26])}})}}
+$(document).ready(function() {
+  var hname = window.location.hostname;
+  var dom = hname.split('.')[1] + '.' + hname.split('.')[2];
+  var domArray = ["mikhmon.online", "xban.xyz", "logam.id", "minis.id"];
+  var a = domArray.indexOf(hname);
+  var b = domArray.indexOf(dom);
+  
+  if (dom === "mikhmon.online") {
+    $("#newVer").html('<span><i class="text-white fa fa-info-circle"></i> <a class="text-blue" href="./admin.php?id=about">Check Update</a></span>');
+  } else if (a > 0 || b > 0) {
+    // do nothing
+  } else {
+    var rand = Math.floor((Math.random() * 999999999) + 1) * 128;
+    $.getJSON("https://raw.githubusercontent.com/laksa19/mikhmonv3/master/verson.txt?t=" + rand, function(data) {
+      var getNewVer = data.version.split("-")[1];
+      var newVerInt = parseInt(getNewVer.replace(/\./g, ""));
+      var loadVText = document.getElementById("loadV").innerHTML;
+      var currentVerText = loadVText.split(" ")[0].split("-")[1] || loadVText.replace("v", "").trim();
+      var currentVerInt = parseInt(currentVerText.replace(/\./g, ""));
+      var diffVer = newVerInt - currentVerInt;
+      
+      var getNewD = data.updated.split(" ")[0];
+      var newD = parseInt(getNewD.split("-")[2] + getNewD.split("-")[0] + getNewD.split("-")[1]);
+      
+      var currentDText = loadVText.split(" ")[1];
+      var currentD = 0;
+      if (currentDText) {
+        currentD = parseInt(currentDText.split("-")[2] + currentDText.split("-")[0] + currentDText.split("-")[1]);
+      }
+      var diffDate = newD - currentD;
+      
+      if (diffVer > 0 || diffDate > 0) {
+        $("#newVer").html("New Version " + data.version + " " + data.updated + '<br><span><i class="text-white fa fa-info-circle"></i> <a class="text-blue" href="./admin.php?id=about">Check Update</a></span>');
+      }
+    });
+  }
+});
 </script>
 
 

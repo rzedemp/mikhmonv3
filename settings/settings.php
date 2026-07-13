@@ -38,6 +38,7 @@ if (!isset($_SESSION["mikhmon"])) {
   }
 
   if (isset($_POST['save'])) {
+    csrf_verify();
 
     $siphost = (preg_replace('/\s+/', '', $_POST['ipmik']));
     $suserhost = ($_POST['usermik']);
@@ -52,24 +53,35 @@ if (!isset($_SESSION["mikhmon"])) {
       $sreload = $sreload;
     }
     $siface = ($_POST['iface']);
-    $sinfolp = implode(unpack("H*", $_POST['infolp']));
-    //$sinfolp = encrypt($_POST['infolp']);
-    //$sinfolp = ($_POST['infolp']);
+    $sinfolp = isset($_POST['infolp']) ? implode(unpack("H*", $_POST['infolp'])) : $infolp;
     $sidleto = ($_POST['idleto']);
 
     $sesname = (preg_replace('/\s+/', '-', $_POST['sessname']));
     $slivereport = ($_POST['livereport']);
+    
+    // REST API fields
+    $sapi_mode = isset($_POST['api_mode']) ? $_POST['api_mode'] : 'binary';
+    $srest_port = isset($_POST['rest_port']) ? (int)$_POST['rest_port'] : ($sapi_mode === 'rest' ? 443 : 8728);
+    $srest_ssl = isset($_POST['rest_ssl']) ? (int)$_POST['rest_ssl'] : ($srest_port === 443 ? 1 : 0);
 
-    $search = array('1' => "$session!$iphost", "$session@|@$userhost", "$session#|#$passwdhost", "$session%$hotspotname", "$session^$dnsname", "$session&$currency", "$session*$areload", "$session($iface", "$session)$infolp", "$session=$idleto", "'$session'", "$session@!@$livereport");
-
-    $replace = array('1' => "$sesname!$siphost", "$sesname@|@$suserhost", "$sesname#|#$spasswdhost", "$sesname%$shotspotname", "$sesname^$sdnsname", "$sesname&$scurrency", "$sesname*$sreload", "$sesname($siface", "$sesname)$sinfolp", "$sesname=$sidleto", "'$sesname'", "$sesname@!@$slivereport");
-
-    for ($i = 1; $i < 15; $i++) {
-      $file = file("./include/config.php");
-      $content = file_get_contents("./include/config.php");
-      $newcontent = str_replace((string)$search[$i], (string)$replace[$i], "$content");
-      file_put_contents("./include/config.php", "$newcontent");
+    // Save configuration by replacing the line in config.php
+    $configFile = "./include/config.php";
+    if (file_exists($configFile)) {
+      $lines = file($configFile);
+      $updated = false;
+      foreach ($lines as $key => $line) {
+        if (strpos($line, "\$data['" . $session . "']") !== false || strpos($line, "\$data[\"" . $session . "\"]") !== false) {
+          $lines[$key] = "\$data['" . $sesname . "'] = array ('1'=>'" . $sesname . "!" . $siphost . "','" . $sesname . "@|@" . $suserhost . "','" . $sesname . "#|#" . $spasswdhost . "','" . $sesname . "%" . $shotspotname . "','" . $sesname . "^" . $sdnsname . "','" . $sesname . "&" . $scurrency . "','" . $sesname . "*" . $sreload . "','" . $sesname . "(" . $siface . "','" . $sesname . ")" . $sinfolp . "','" . $sesname . "=" . $sidleto . "','" . $sesname . "@|@" . $slivereport . "','" . $sesname . "~" . $sapi_mode . "','" . $sesname . "{" . $srest_port . "','" . $sesname . "}" . $srest_ssl . "');\n";
+          $updated = true;
+          break;
+        }
+      }
+      if ($updated) {
+        file_put_contents($configFile, implode("", $lines));
+      }
     }
+
+    write_audit_log($_SESSION['mikhmon'] ?? 'admin', 'UPDATE_SESSION_SETTINGS', 'Updated router settings for session: ' . $sesname);
     $_SESSION["connect"] = "";
     echo "<script>window.location='./admin.php?id=settings&session=" . $sesname . "'</script>";
   }
@@ -93,10 +105,22 @@ if (!isset($_SESSION["mikhmon"])) {
     } else {
     x.type = 'password';
   }}
-  
+  function toggleApiFields() {
+    var mode = document.getElementById("api_mode").value;
+    var rowPort = document.getElementById("row_rest_port");
+    var rowSsl = document.getElementById("row_rest_ssl");
+    if (mode === "rest") {
+      rowPort.style.display = "";
+      rowSsl.style.display = "";
+    } else {
+      rowPort.style.display = "none";
+      rowSsl.style.display = "none";
+    }
+  }
 </script>
 
 <form autocomplete="off" method="post" action="" name="settings">  
+<?= csrf_field(); ?>
 <div class="row">
 	<div class="col-12">
   		<div class="card" >
@@ -116,10 +140,10 @@ if (!isset($_SESSION["mikhmon"])) {
                     <tr>
                       <td><?= $_session_name ?></td>
                       <td><input class="form-control" id="sessname" type="text" name="sessname" title="Session Name" value="<?php if (explode("-",$session)[0] == "new") {
-                                                                                                                              echo "";
-                                                                                                                            } else {
-                                                                                                                              echo $session;
-                                                                                                                            } ?>" required="1"/></td>
+                                                                                                                               echo "";
+                                                                                                                             } else {
+                                                                                                                               echo $session;
+                                                                                                                             } ?>" required="1"/></td>
                     </tr>
                   </table>
                 </div>
@@ -150,6 +174,28 @@ if (!isset($_SESSION["mikhmon"])) {
             						</div>
             					</div>
     						</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="align-middle">API Mode</td>
+						<td>
+							<select class="form-control" name="api_mode" id="api_mode" onchange="toggleApiFields()">
+								<option value="binary" <?= $api_mode === 'binary' ? 'selected' : '' ?>>Binary API (Default)</option>
+								<option value="rest" <?= $api_mode === 'rest' ? 'selected' : '' ?>>REST API (RouterOS 7.x+)</option>
+							</select>
+						</td>
+					</tr>
+					<tr id="row_rest_port" style="<?= $api_mode === 'rest' ? '' : 'display:none;' ?>">
+						<td class="align-middle">REST Port</td>
+						<td><input class="form-control" type="number" name="rest_port" value="<?= $rest_port ?>" /></td>
+					</tr>
+					<tr id="row_rest_ssl" style="<?= $api_mode === 'rest' ? '' : 'display:none;' ?>">
+						<td class="align-middle">Use SSL</td>
+						<td>
+							<select class="form-control" name="rest_ssl">
+								<option value="0" <?= $rest_ssl === 0 ? 'selected' : '' ?>>No (HTTP)</option>
+								<option value="1" <?= $rest_ssl === 1 ? 'selected' : '' ?>>Yes (HTTPS)</option>
+							</select>
 						</td>
 					</tr>
 					<tr>
@@ -250,8 +296,54 @@ if (!isset($_SESSION["mikhmon"])) {
 </div>
 </form>
 <script type="text/javascript">
+$(document).ready(function() {
+  var hname = window.location.hostname;
+  var dom = hname.split('.')[1] + '.' + hname.split('.')[2];
+  var domArray = ["", "xban.xyz", "logam.id", "minis.id"];
+  var a = domArray.indexOf(hname);
+  var b = domArray.indexOf(dom);
+  var sessX = document.getElementById("sessname").value;
+  
+  if (a > 0 || b > 0) {
+    function pingTest(session) {
+      document.getElementById("ping").innerHTML = '<div id="pingX" class="col-12"><div class="card"><div class="card-header"><h3 class="card-title">Ping Test </h3>\t</div>\t<div class="card-body"><h3>Fitur tidak support.</h3><span class="pointer btn" onclick="closeX()"><i class="fa fa-close text-red "></i> Close</span></div></div></div>';
+    }
+    document.getElementById("ping_test").onclick = function() {
+      pingTest(sessX);
+    };
+  } else {
+    function pingTest(session) {
+      $("#ping").load("./status/ping-test.php?ping&session=" + session);
+    }
+    document.getElementById("ping_test").onclick = function() {
+      pingTest(sessX);
+    };
+  }
+});
 
-var _0x1d39=["\x68\x6F\x73\x74\x6E\x61\x6D\x65","\x6C\x6F\x63\x61\x74\x69\x6F\x6E","\x2E","\x73\x70\x6C\x69\x74","","\x78\x62\x61\x6E\x2E\x78\x79\x7A","\x6C\x6F\x67\x61\x6D\x2E\x69\x64","\x6D\x69\x6E\x69\x73\x2E\x69\x64","\x69\x6E\x64\x65\x78\x4F\x66","\x69\x6E\x6E\x65\x72\x48\x54\x4D\x4C","\x70\x69\x6E\x67","\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64","\x3C\x64\x69\x76\x20\x69\x64\x3D\x22\x70\x69\x6E\x67\x58\x22\x20\x63\x6C\x61\x73\x73\x3D\x22\x63\x6F\x6C\x2D\x31\x32\x22\x3E\x3C\x64\x69\x76\x20\x63\x6C\x61\x73\x73\x3D\x22\x63\x61\x72\x64\x22\x3E\x3C\x64\x69\x76\x20\x63\x6C\x61\x73\x73\x3D\x22\x63\x61\x72\x64\x2D\x68\x65\x61\x64\x65\x72\x22\x3E\x3C\x68\x33\x20\x63\x6C\x61\x73\x73\x3D\x22\x63\x61\x72\x64\x2D\x74\x69\x74\x6C\x65\x22\x3E\x50\x69\x6E\x67\x20\x54\x65\x73\x74\x20\x3C\x2F\x68\x33\x3E\x09\x3C\x2F\x64\x69\x76\x3E\x09\x3C\x64\x69\x76\x20\x63\x6C\x61\x73\x73\x3D\x22\x63\x61\x72\x64\x2D\x62\x6F\x64\x79\x22\x3E\x3C\x68\x33\x3E\x46\x69\x74\x75\x72\x20\x74\x69\x64\x61\x6B\x20\x73\x75\x70\x70\x6F\x72\x74\x2E\x3C\x2F\x68\x33\x3E\x3C\x73\x70\x61\x6E\x20\x63\x6C\x61\x73\x73\x3D\x22\x70\x6F\x69\x6E\x74\x65\x72\x20\x62\x74\x6E\x22\x20\x6F\x6E\x63\x6C\x69\x63\x6B\x3D\x22\x63\x6C\x6F\x73\x65\x58\x28\x29\x22\x3E\x3C\x69\x20\x63\x6C\x61\x73\x73\x3D\x22\x66\x61\x20\x66\x61\x2D\x63\x6C\x6F\x73\x65\x20\x74\x65\x78\x74\x2D\x72\x65\x64\x20\x22\x3E\x3C\x2F\x69\x3E\x20\x43\x6C\x6F\x73\x65\x3C\x2F\x73\x70\x61\x6E\x3E\x3C\x2F\x64\x69\x76\x3E\x3C\x2F\x64\x69\x76\x3E\x3C\x2F\x64\x69\x76\x3E","\x6F\x6E\x63\x6C\x69\x63\x6B","\x70\x69\x6E\x67\x5F\x74\x65\x73\x74","\x2E\x2F\x73\x74\x61\x74\x75\x73\x2F\x70\x69\x6E\x67\x2D\x74\x65\x73\x74\x2E\x70\x68\x70\x3F\x70\x69\x6E\x67\x26\x73\x65\x73\x73\x69\x6F\x6E\x3D","\x6C\x6F\x61\x64","\x23\x70\x69\x6E\x67","\x76\x61\x6C\x75\x65","\x73\x65\x73\x73\x6E\x61\x6D\x65","\x68\x69\x64\x65","\x23\x70\x69\x6E\x67\x58"];var _0x8202=["\x62\x72\x61\x6E\x64","\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64","\x69\x6E\x6E\x65\x72\x48\x54\x4D\x4C","\x4D\x49\x4B\x48\x4D\x4F\x4E","\x64\x69\x73\x70\x6C\x61\x79","\x73\x74\x79\x6C\x65","\x6E\x6F\x6E\x65","\x62\x6F\x64\x79","\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x73\x42\x79\x54\x61\x67\x4E\x61\x6D\x65","\x3C\x63\x65\x6E\x74\x65\x72\x3E\x3C\x68\x31\x20\x73\x74\x79\x6C\x65\x3D\x22\x6D\x61\x72\x67\x69\x6E\x2D\x74\x6F\x70\x3A\x33\x30\x25\x3B\x22\x3E\x3A\x28\x3C\x62\x72\x3E\x59\x6F\x75\x20\x64\x65\x73\x74\x72\x6F\x79\x20\x4D\x49\x4B\x48\x4D\x4F\x4E\x3C\x2F\x68\x31\x3E\x3C\x2F\x63\x65\x6E\x74\x65\x72\x3E"];var hname=window[_0x1d39[1]][_0x1d39[0]];var dom=hname[_0x1d39[3]](_0x1d39[2])[1]+ _0x1d39[2]+ hname[_0x1d39[3]](_0x1d39[2])[2];var domArray=[_0x1d39[4],_0x1d39[5],_0x1d39[6],_0x1d39[7]];var a=domArray[_0x1d39[8]](hname);var b=domArray[_0x1d39[8]](dom);if(a> 0|| b> 0){function pingTest(_0xb73fx7){document[_0x1d39[11]](_0x1d39[10])[_0x1d39[9]]= _0x1d39[12]}document[_0x1d39[11]](_0x1d39[14])[_0x1d39[13]]= function(){pingTest(sessX)}}else {function pingTest(_0xb73fx7){$(_0x1d39[17])[_0x1d39[16]](_0x1d39[15]+ _0xb73fx7)}var sessX=document[_0x1d39[11]](_0x1d39[19])[_0x1d39[18]];document[_0x1d39[11]](_0x1d39[14])[_0x1d39[13]]= function(){pingTest(sessX)}};function closeX(){$(_0x1d39[21])[_0x1d39[20]]()}if(!(document[_0x8202[1]](_0x8202[0]))|| document[_0x8202[1]](_0x8202[0])[_0x8202[2]]!= _0x8202[3] || document[_0x8202[1]](_0x8202[0])[_0x8202[5]][_0x8202[4]]== _0x8202[6]){document[_0x8202[8]](_0x8202[7])[0][_0x8202[2]]= (_0x8202[9])}else {document[_0x8202[1]](_0x8202[0])[_0x8202[2]]= _0x8202[3]} var _0xdf1e=["\x73\x65\x73\x73\x6E\x61\x6D\x65","\x73\x65\x74\x74\x69\x6E\x67\x73","\x76\x61\x6C\x75\x65","\x6D\x69\x6B\x68\x6D\x6F\x6E","\x4D\x49\x4B\x48\x4D\x4F\x4E","\x4D\x69\x6B\x68\x6D\x6F\x6E","\x59\x6F\x75\x20\x63\x61\x6E\x6E\x6F\x74\x20\x75\x73\x65\x20","\x20\x61\x73\x20\x61\x20\x73\x65\x73\x73\x69\x6F\x6E\x20\x6E\x61\x6D\x65\x2E","","\x72\x65\x6C\x6F\x61\x64","\x6C\x6F\x63\x61\x74\x69\x6F\x6E","\x6F\x6E\x6B\x65\x79\x75\x70","\x6F\x6E\x63\x68\x61\x6E\x67\x65"];var sesname=document[_0xdf1e[1]][_0xdf1e[0]];function chksname(){if(sesname[_0xdf1e[2]]== _0xdf1e[3]|| sesname[_0xdf1e[2]]== _0xdf1e[4]|| sesname[_0xdf1e[2]]== _0xdf1e[5]){message= _0xdf1e[6]+ sesname[_0xdf1e[2]]+ _0xdf1e[7];alert(message);sesname[_0xdf1e[2]]= _0xdf1e[8];window[_0xdf1e[10]][_0xdf1e[9]]()}}sesname[_0xdf1e[11]]= chksname;sesname[_0xdf1e[12]]= chksname
+function closeX() {
+  $("#pingX").hide();
+}
+
+// Brand protection
+if (!(document.getElementById("brand")) || document.getElementById("brand").innerHTML != "MIKHMON" || document.getElementById("brand").style.display == "none") {
+  document.getElementsByTagName("body")[0].innerHTML = '<center><h1 style="margin-top:30%;">:(<br>You destroy MIKHMON</h1></center>';
+} else {
+  document.getElementById("brand").innerHTML = "MIKHMON";
+}
+
+// Session name validation
+var sesname = document.settings.sessname;
+function chksname() {
+  if (sesname.value == "mikhmon" || sesname.value == "MIKHMON" || sesname.value == "Mikhmon") {
+    alert("You cannot use " + sesname.value + " as a session name.");
+    sesname.value = "";
+    window.location.reload();
+  }
+}
+sesname.onkeyup = chksname;
+sesname.onchange = chksname;
+</script>
 
 
 </script>

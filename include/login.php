@@ -34,6 +34,7 @@ session_start();
       </div>
       <center>
       <form autocomplete="off" action="" method="post">
+      <?= csrf_field(); ?>
       <table class="table" style="width:90%">
         <tr>
           <td class="align-middle text-center">

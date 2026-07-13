@@ -15,7 +15,71 @@
  *
  ******************************/
 
-class RouterosAPI
+class RouterosAPI {
+    private $instance;
+    public $debug = false;
+    public $connected = false;
+    public $port = 8728;
+    public $ssl = false;
+    public $timeout = 3;
+    public $attempts = 5;
+    public $delay = 3;
+
+    public function connect($ip, $login, $password) {
+        global $api_mode, $rest_port, $rest_ssl;
+        
+        if (isset($api_mode) && $api_mode === 'rest') {
+            include_once __DIR__ . '/routeros_rest_api.class.php';
+            $this->instance = new RouterosRestAPI();
+            $this->instance->debug = $this->debug;
+            $this->instance->port = isset($rest_port) ? (int)$rest_port : 443;
+            $this->instance->ssl = isset($rest_ssl) ? (bool)$rest_ssl : true;
+            $this->instance->timeout = $this->timeout;
+        } else {
+            $this->instance = new RouterosBinaryAPI();
+            $this->instance->debug = $this->debug;
+            $this->instance->port = $this->port;
+            $this->instance->ssl = $this->ssl;
+            $this->instance->timeout = $this->timeout;
+            $this->instance->attempts = $this->attempts;
+            $this->instance->delay = $this->delay;
+        }
+
+        $res = $this->instance->connect($ip, $login, $password);
+        $this->connected = $this->instance->connected;
+        return $res;
+    }
+
+    public function disconnect() {
+        if ($this->instance) {
+            $this->instance->disconnect();
+            $this->connected = $this->instance->connected;
+        }
+    }
+
+    public function comm($com, $arr = array()) {
+        if ($this->instance) {
+            return $this->instance->comm($com, $arr);
+        }
+        return array();
+    }
+
+    public function write($command, $param2 = true) {
+        if ($this->instance && method_exists($this->instance, 'write')) {
+            return $this->instance->write($command, $param2);
+        }
+        return false;
+    }
+
+    public function read($parse = true) {
+        if ($this->instance && method_exists($this->instance, 'read')) {
+            return $this->instance->read($parse);
+        }
+        return array();
+    }
+}
+
+class RouterosBinaryAPI
 {
     var $debug     = false; //  Show debug information
     var $connected = false; //  Connection state
@@ -435,29 +499,32 @@ class RouterosAPI
     }
 }
 
-// encrypt decript
+if (!function_exists('encrypt')) {
+	function encrypt($string, $key=128) {
+		$result = '';
+		for($i=0, $k= strlen($string); $i<$k; $i++) {
+			$char = substr($string, $i, 1);
+			$keychar = substr($key, ($i % strlen($key))-1, 1);
+			$char = chr(ord($char)+ord($keychar));
+			$result .= $char;
+		}
+		return base64_encode($result);
+	}
+}
+if (!function_exists('decrypt')) {
+	function decrypt($string, $key=128) {
+		$result = '';
+		$string = base64_decode($string);
+		for($i=0, $k=strlen($string); $i< $k ; $i++) {
+			$char = substr($string, $i, 1);
+			$keychar = substr($key, ($i % strlen($key))-1, 1);
+			$char = chr(ord($char)-ord($keychar));
+			$result .= $char;
+		}
+		return $result;
+	}
+}
 
-function encrypt($string, $key=128) {
-	$result = '';
-	for($i=0, $k= strlen($string); $i<$k; $i++) {
-		$char = substr($string, $i, 1);
-		$keychar = substr($key, ($i % strlen($key))-1, 1);
-		$char = chr(ord($char)+ord($keychar));
-		$result .= $char;
-	}
-	return base64_encode($result);
-}
-function decrypt($string, $key=128) {
-	$result = '';
-	$string = base64_decode($string);
-	for($i=0, $k=strlen($string); $i< $k ; $i++) {
-		$char = substr($string, $i, 1);
-		$keychar = substr($key, ($i % strlen($key))-1, 1);
-		$char = chr(ord($char)-ord($keychar));
-		$result .= $char;
-	}
-	return $result;
-}
 
 // Reformat date time MikroTik
 // by Laksamadi Guko

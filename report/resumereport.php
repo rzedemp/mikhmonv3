@@ -80,7 +80,7 @@ if ($currency == in_array($currency, $cekindo['indo'])) {
               <div class="card-body">
                 <div class="row">
 
-                  <script src="./js/highcharts/highcharts.js"></script>
+                  <script src="https://code.highcharts.com/8.2.0/highcharts.js"></script>
                   <script src="./js/highcharts/themes/hc.<?= $theme; ?>.js"></script>
 
 
