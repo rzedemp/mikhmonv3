@@ -67,6 +67,11 @@ if (!isset($_SESSION["mikhmon"])) {
     $getuser = $API->comm("/ip/hotspot/user/print", array(
       "?name" => "$name",
     ));
+    
+    // Trigger notification
+    include_once __DIR__ . '/../lib/notification.php';
+    notify_user_created($name, $profile);
+    
     $uid = $getuser[0]['.id'];
     echo "<script>window.location='./?hotspot-user=" . $uid . "&session=" . $session . "'</script>";
   }

@@ -223,6 +223,14 @@ date_default_timezone_set($_SESSION['timezone']);
 		}
 
 
+		// Trigger notification
+		include_once __DIR__ . '/../lib/notification.php';
+		if ($qty < 2) {
+			notify_user_created($u[1], $profile);
+		} else {
+			notify_all('VOUCHERS_GENERATED', "✅ Generated *{$qty}* new voucher users:\nProfile: *{$profile}*\nComment/Prefix: *{$commt}*");
+		}
+
 		if ($qty < 2) {
 			echo "<script>window.location='./?hotspot-user=" . $u[1] . "&session=" . $session . "'</script>";
 		} else {

@@ -71,15 +71,21 @@ include_once('./lib/formatbytesbites.php');
 if ($id == "login" || substr($url, -1) == "p") {
 
   if (isset($_POST['login'])) {
-    $user = $_POST['user'];
-    $pass = $_POST['pass'];
-    if ($user == $useradm && $pass == decrypt($passadm)) {
-      $_SESSION["mikhmon"] = $user;
-
-        echo "<script>window.location='./admin.php?id=sessions'</script>";
-    
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+    if (!rate_limit_check($ip, 5, 300)) {
+      $error = '<div style="width: 100%; padding:5px 0px 5px 0px; border-radius:5px;" class="bg-danger"><i class="fa fa-ban"></i> Alert!<br>Too many login attempts. Please try again in 5 minutes.</div>';
     } else {
-      $error = '<div style="width: 100%; padding:5px 0px 5px 0px; border-radius:5px;" class="bg-danger"><i class="fa fa-ban"></i> Alert!<br>Invalid username or password.</div>';
+      csrf_verify();
+      $user = $_POST['user'];
+      $pass = $_POST['pass'];
+      if ($user == $useradm && $pass == decrypt($passadm)) {
+        $_SESSION["mikhmon"] = $user;
+        write_audit_log($user, 'LOGIN_SUCCESS', 'User logged in successfully.');
+        echo "<script>window.location='./admin.php?id=sessions'</script>";
+      } else {
+        write_audit_log('system', 'LOGIN_FAILURE', "Failed login attempt for user '$user'");
+        $error = '<div style="width: 100%; padding:5px 0px 5px 0px; border-radius:5px;" class="bg-danger"><i class="fa fa-ban"></i> Alert!<br>Invalid username or password.</div>';
+      }
     }
   }
   
@@ -90,6 +96,14 @@ if ($id == "login" || substr($url, -1) == "p") {
 } elseif (substr($url, -1) == "/" || substr($url, -4) == ".php") {
   echo "<script>window.location='./admin.php?id=sessions'</script>";
 
+} elseif ($id == "noc") {
+  $_SESSION["connect"] = "";
+  include_once('./include/menu.php');
+  include_once('./dashboard/noc.php');
+} elseif ($id == "notif") {
+  $_SESSION["connect"] = "";
+  include_once('./include/menu.php');
+  include_once('./settings/notif_settings.php');
 } elseif ($id == "sessions") {
   $_SESSION["connect"] = "";
   include_once('./include/menu.php');

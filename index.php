@@ -115,6 +115,8 @@ if (!isset($_SESSION["mikhmon"])) {
   $report = $_GET['report'];
   $removereport = $_GET['remove-report'];
   $minterface = $_GET['interface'];
+  $qos = $_GET['qos'];
+  $removequeue = $_GET['remove-queue'];
 
 
   $pagehotspot = array('users','hosts','ipbinding','cookies','log','dhcp-leases');
@@ -496,13 +498,27 @@ elseif ($ppp == "edit-profile") {
 
     include_once('./process/pscheduler.php');
   }
+  // QoS simple queue manager
+  elseif ($qos == "queues") {
+    include_once('./qos/queues.php');
+  }
+  elseif ($qos == "add") {
+    include_once('./qos/addqueue.php');
+  }
+  elseif ($qos == "edit") {
+    include_once('./qos/queuebyname.php');
+  }
+  elseif ($removequeue != "") {
+    echo "<b class='cl-w'><i class='fa fa-circle-o-notch fa-spin' style='font-size:24px'></i> Processing...</b>";
+    include_once('./process/removequeue.php');
+  }
 
   ?>
 
 </div>
 </div>
 </div>
-<script src="./js/highcharts/highcharts.js"></script>
+<script src="https://code.highcharts.com/8.2.0/highcharts.js"></script>
 <script src="./js/highcharts/themes/hc.<?= $theme; ?>.js"></script>
 <script src="./js/mikhmon-ui.<?= $theme; ?>.min.js"></script>
 <script src="./js/mikhmon.js?t=<?= str_replace(" ","_",date("Y-m-d H:i:s")); ?>"></script>
@@ -585,7 +601,7 @@ $(document).ready(function(){
 });
 </script>";
 
-} elseif (in_array($hotspot, $pagehotspot) || in_array($ppp, $pageppp) || in_array($report, $pagereport) || $sys == "scheduler") {
+} elseif (in_array($hotspot, $pagehotspot) || in_array($ppp, $pageppp) || in_array($report, $pagereport) || $sys == "scheduler" || $qos != "") {
 echo '
 <script>
 $(document).ready(function(){

@@ -18,6 +18,15 @@
 session_start();
  // hide all error
 error_reporting(0);
+
+// Security Headers
+if (!headers_sent()) {
+    header("X-Frame-Options: SAMEORIGIN");
+    header("X-Content-Type-Options: nosniff");
+    header("X-XSS-Protection: 1; mode=block");
+    header("Referrer-Policy: strict-origin-when-cross-origin");
+    header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://code.highcharts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com;");
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -30,10 +39,13 @@ error_reporting(0);
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<!-- Theme color -->
 		<meta name="theme-color" content="<?= $themecolor ?>" />
-		<!-- Font Awesome -->
-		<link rel="stylesheet" type="text/css" href="css/font-awesome/css/font-awesome.min.css" />
+		<!-- Font Awesome 6 + v4 shims -->
+		<link rel="stylesheet" type="text/css" href="css/font-awesome/css/all.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/font-awesome/css/v4-shims.min.css" />
 		<!-- Mikhmon UI -->
 		<link rel="stylesheet" href="css/mikhmon-ui.<?= $theme; ?>.min.css">
+		<!-- Modernized Theme Layer -->
+		<link rel="stylesheet" href="css/mikhmon-theme.css">
 		<!-- favicon -->
 		<link rel="icon" href="./img/favicon.png" />
 		<!-- jQuery -->
@@ -45,6 +57,18 @@ error_reporting(0);
 		
 	</head>
 	<body>
+		<script>
+			if (localStorage.getItem('mikhmon_theme') === 'dark') {
+				document.body.setAttribute('data-theme', 'dark');
+			}
+			document.addEventListener("DOMContentLoaded", function() {
+				var isDark = document.body.getAttribute('data-theme') === 'dark';
+				var icon = document.getElementById('darkModeIcon');
+				if (icon) {
+					icon.className = isDark ? 'fa fa-sun-o' : 'fa fa-moon-o';
+				}
+			});
+		</script>
 		<div class="wrapper">
 
 			

@@ -70,6 +70,9 @@ if (!isset($_SESSION["mikhmon"])) {
   } elseif ($minterface == "traffic-monitor") {
     $strafficmonitor = "active";
     $mpage = $_traffic_monitor;  
+  } elseif ($qos != "") {
+    $sqos = "active";
+    $mpage = "Simple Queue";
   } elseif ($hotspot == "ipbinding" || $hotspot == "binding" || $removeipbinding != "" || $enableipbinding != "" || $disableipbinding != "") {
     $sipbind = "active";
     $mpage = $_ip_bindings;
@@ -139,6 +142,12 @@ if (!isset($_SESSION["mikhmon"])) {
   } elseif ($hotspot == "about") {
     $mpage = $_about;
     $sabout = "active";
+  } elseif ($id == "noc") {
+    $snoc = "active";
+    $mpage = "NOC Dashboard";
+  } elseif ($id == "notif") {
+    $snotif = "active";
+    $mpage = "Notifications";
   } elseif ($id == "sessions" || $id == "remove" || $router == "new") {
     $ssesslist = "active";
     $mpage = $_admin_settings;
@@ -180,6 +189,7 @@ if($idleto != "disable"){
 <a id="cpage" class="navbar-left" href="javascript:void(0)"><?= $mpage; ?></a>
 </div>
  <div class="navbar-right">
+  <a id="darkModeToggle" href="javascript:void(0)" onclick="toggleDarkMode()" title="Toggle Dark Mode"><i id="darkModeIcon" class="fa fa-moon-o"></i></a>
   <a id="logout" href="./admin.php?id=logout" ><i class="fa fa-sign-out mr-1"></i> <?= $_logout ?></a>
   <select class="stheme ses text-right mr-t-10 pd-5">
     <option> <?= $_theme?></option>
@@ -218,6 +228,8 @@ if($idleto != "disable"){
   <div class="menu spa"></div>
 <?php 
 } ?>  
+  <a href="./admin.php?id=noc" class="menu <?= $snoc; ?>"><i class="fa fa-server"></i> NOC Dashboard</a>
+  <a href="./admin.php?id=notif" class="menu <?= $snotif; ?>"><i class="fa fa-bell"></i> Notifications</a>
   <a href="./admin.php?id=sessions" class="menu <?= $ssesslist; ?>"><i class="fa fa-gear"></i> <?= $_admin_settings ?></a>
   <a href="./admin.php?id=settings&router=new-<?= rand(1111,9999) ?>" class="menu <?= $snsettings ?>"><i class="fa fa-plus"></i> <?= $_add_router ?></a>
   <a href="./admin.php?id=about" class="menu <?= $sabout; ?>"><i class="fa fa-info-circle"></i> <?= $_about ?></a>
@@ -255,6 +267,7 @@ include('./info.php');
 <a id="cpage" class="navbar-left" href="javascript:void(0)"><?= $mpage; ?></a>
 </div>
  <div class="navbar-right">
+  <a id="darkModeToggle" href="javascript:void(0)" onclick="toggleDarkMode()" title="Toggle Dark Mode"><i id="darkModeIcon" class="fa fa-moon-o"></i></a>
   <a id="logout" href="./?hotspot=logout&session=<?= $session; ?>" ><i class="fa fa-sign-out mr-1"></i> <?= $_logout ?></a>
   <select class="stheme ses text-right mr-t-10 pd-5">
     <option> <?= $_theme ?></option>
@@ -344,6 +357,8 @@ include('./info.php');
   <a href="./?hotspot=dhcp-leases&session=<?= $session; ?>" class="menu <?= $slease; ?>"><i class=" fa fa-sitemap"></i> <?= $_dhcp_leases ?></a>
   <!--traffic monitor-->
   <a href="./?interface=traffic-monitor&session=<?= $session; ?>" class="menu <?= $strafficmonitor; ?>"><i class=" fa fa-area-chart"></i> <?= $_traffic_monitor ?></a>
+  <!--simple queue-->
+  <a href="./?qos=queues&session=<?= $session; ?>" class="menu <?= $sqos; ?>"><i class="fa fa-tasks"></i> Simple Queue</a>
   <!--report-->
   <a href="./?report=selling&idbl=<?= strtolower(date("M")) . date("Y"); ?>&session=<?= $session; ?>" class="menu <?= $sselling; ?>"><i class="nav-icon fa fa-money"></i> <?= $_report ?></a>
   <!--settings-->

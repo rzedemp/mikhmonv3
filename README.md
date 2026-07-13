@@ -1,9 +1,60 @@
 ### MIKHMON V3
 
+#### Setup (Khusus v3.21+)
+
+> **Penting untuk pengguna baru yang clone dari GitHub:**
+> Beberapa file konfigurasi tidak ikut ter-clone karena berisi credential sensitif.
+> Buat file-file berikut secara manual setelah clone:
+>
+> **1. `include/.key.php`** — Sodium encryption key untuk password router:
+> ```bash
+> # Salin dari template:
+> cp include/.key.php.example include/.key.php
+> # Lalu generate key baru dan isi ke dalam file tersebut:
+> php -r "echo base64_encode(random_bytes(32)) . PHP_EOL;"
+> ```
+>
+> **2. `wa-gateway/.env`** — Konfigurasi WhatsApp Gateway:
+> ```bash
+> cp wa-gateway/.env.example wa-gateway/.env
+> # Edit file .env dan ganti API_KEY dengan key acak Anda sendiri
+> ```
+>
+> **3. `include/notif_config.php`** — Dibuat otomatis saat Anda pertama kali menyimpan
+> pengaturan notifikasi dari halaman **Settings > Notifications**.
+> Tidak perlu dibuat manual — halaman ini sudah handle fresh install.
+
 #### Download update.zip
 [update.zip](https://raw.githubusercontent.com/laksa19/laksa19.github.io/master/download/update.zip){:target="_blank"}
 
 ### Changelog
+
+#### Update 07-13 2026 V3.23 (Anti-Ban & Hotspot Fix)
+1. **WhatsApp Anti-Ban Protection Suite**:
+   - Integrated asynchronous memory queue processing with human-like randomized delays (3s–8s) to simulate natural user actions.
+   - Dynamic hourly/daily rate limiting with adaptive **Warm-up Mode** for newly activated SIM cards.
+   - Integrated **Circuit Breaker** pausing (shuts down outbound processing for 30 minutes after 5 consecutive failures) to prevent numbers from being flagged.
+   - Recipient JID validation check via `onWhatsApp()` to skip invalid targets and write status logging to `logs/notif.log`.
+   - Real-time **Anti-Ban Protection Dashboard** UI under Notification settings with AJAX-based status and usage monitoring.
+2. **Dynamic Gateway Versioning**:
+   - Dynamically fetches the latest WhatsApp protocol version to prevent connection failure error `405 Method Not Allowed`.
+3. **Hotspot Fix**:
+   - Resolved critical unclosed PHP echo block syntax error inside `hotspot/userbyname.php`.
+
+#### Update 07-12 2026 V3.22
+1. **Multi-Router NOC Dashboard**:
+   - Consolidated NOC status monitoring dashboard tracking multiple MikroTik routers.
+2. **Bandwidth Manager**:
+   - Refined bandwidth monitoring and traffic control workflows.
+
+#### Update 07-12 2026 V3.21
+1. **Security Hardening**:
+   - Modern encryption (`sodium_crypto_secretbox()` / OpenSSL AES-256-CBC) replacing insecure legacy XOR.
+   - Centralized security library (`lib/security.php`) for CSRF tokens, Rate Limiting, Audit Logging.
+   - HTTP Security Headers (CSP, X-Frame-Options, X-Content-Type-Options, etc.).
+   - Cleaned/De-obfuscated JavaScript files across the application.
+2. **REST API Support**:
+   - Dual-mode RouterOS API client allowing transparent switching to the native RouterOS REST API for MikroTik RouterOS v7.1+.
 
 #### Update 06-30 2021 V3.20
 1. Perbaikan typo script profile ```on-login```.

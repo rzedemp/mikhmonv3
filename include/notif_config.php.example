@@ -1,0 +1,30 @@
+<?php
+// Mikhmon Notification Configuration — TEMPLATE
+// ================================================
+// File ini adalah TEMPLATE. Salin file ini menjadi notif_config.php
+// ATAU biarkan sistem membuatnya otomatis saat Anda menyimpan pengaturan
+// di halaman Settings > Notifications.
+//
+// File notif_config.php ini di-generate ulang setiap kali admin menyimpan
+// konfigurasi dari UI. JANGAN commit file notif_config.php ke Git —
+// sudah ada di .gitignore.
+
+$notif_config = array (
+  // --- Telegram ---
+  'telegram_enabled' => false,
+  'telegram_token'   => 'TELEGRAM-BOT-TOKEN-ANDA',       // Dari @BotFather
+  'telegram_chat_id' => 'TELEGRAM-CHAT-ID-ANDA',         // Bisa grup atau personal
+
+  // --- WhatsApp Gateway ---
+  'wa_enabled'       => false,
+  'wa_gateway_url'   => 'http://127.0.0.1:3001',         // URL ke wa-gateway Node.js service
+  'wa_gateway_key'   => 'KEY-RAHASIA-SAMA-DENGAN-ENV',   // Harus sama dengan API_KEY di wa-gateway/.env
+  'wa_targets'       => '',                               // Nomor HP tujuan (format: 628xxx), pisah koma
+
+  // --- Alert Thresholds ---
+  'cpu_threshold'    => 80.0,                            // Persen CPU sebelum notifikasi dikirim
+  'memory_threshold' => 85.0,                            // Persen Memory sebelum notifikasi dikirim
+
+  // --- Per-Router Thresholds (opsional, dikonfigurasi dari UI) ---
+  'router_thresholds' => array (),
+);
