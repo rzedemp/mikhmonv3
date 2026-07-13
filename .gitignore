@@ -18,6 +18,12 @@ voucher/template-thermal.php
 # Config (berisi credential MikroTik — JANGAN di-commit)
 include/config.php
 
+# Security key (sodium encryption key — JANGAN di-commit, buat dari .key.php.example)
+include/.key.php
+
+# Notification config runtime (ditulis otomatis oleh UI, berisi token/key asli — JANGAN di-commit)
+include/notif_config.php
+
 # Test results
 test/results/
 

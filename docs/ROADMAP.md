@@ -44,35 +44,35 @@ Membangun fondasi keamanan yang solid dan menambahkan dukungan RouterOS REST API
 
 | ID | Task | File Utama | Status |
 |---|---|---|---|
-| S1-001 | Buat `lib/security.php` dengan fungsi CSRF, enkripsi sodium, rate limiting, audit log, helper `h()` | `lib/security.php` | `[ ]` |
-| S1-002 | Implementasi soft-migration enkripsi (XOR → sodium) di `readcfg.php` | `include/readcfg.php` | `[ ]` |
-| S1-003 | Tambah CSRF token di semua form POST | `admin.php`, `settings/settings.php`, semua `process/*.php` | `[ ]` |
-| S1-004 | Tambah rate limiting di login handler | `admin.php` | `[ ]` |
-| S1-005 | Tambah audit logging di aksi-aksi penting | Multiple files | `[ ]` |
-| S1-006 | Tambah security headers di `include/headhtml.php` | `include/headhtml.php` | `[ ]` |
-| S1-007 | Bersihkan semua obfuscated JavaScript | `settings/settings.php`, `dashboard/home.php` | `[ ]` |
-| S1-008 | Tambah `logs/.htaccess` untuk blokir akses HTTP langsung ke log | `logs/.htaccess` | `[ ]` |
-| S1-009 | Wrap semua output dinamis dengan `h()` (audit XSS) | Multiple files | `[ ]` |
+| S1-001 | Buat `lib/security.php` dengan fungsi CSRF, enkripsi sodium, rate limiting, audit log, helper `h()` | `lib/security.php` | `[x]` |
+| S1-002 | Implementasi soft-migration enkripsi (XOR → sodium) di `readcfg.php` | `include/readcfg.php` | `[x]` |
+| S1-003 | Tambah CSRF token di semua form POST | `admin.php`, `settings/settings.php`, semua `process/*.php` | `[x]` |
+| S1-004 | Tambah rate limiting di login handler | `admin.php` | `[x]` |
+| S1-005 | Tambah audit logging di aksi-aksi penting | Multiple files | `[x]` |
+| S1-006 | Tambah security headers di `include/headhtml.php` | `include/headhtml.php` | `[x]` |
+| S1-007 | Bersihkan semua obfuscated JavaScript | `settings/settings.php`, `dashboard/home.php` | `[x]` |
+| S1-008 | Tambah `logs/.htaccess` untuk blokir akses HTTP langsung ke log | `logs/.htaccess` | `[x]` |
+| S1-009 | Wrap semua output dinamis dengan `h()` (audit XSS) | Multiple files | `[x]` |
 
 #### 🟠 TINGGI — RouterOS REST API
 
 | ID | Task | File Utama | Status |
 |---|---|---|---|
-| S1-010 | Buat `lib/routeros_rest_api.class.php` | `lib/routeros_rest_api.class.php` | `[ ]` |
-| S1-011 | Buat `lib/api_factory.php` (factory pattern untuk pilih API mode) | `lib/api_factory.php` | `[ ]` |
-| S1-012 | Update `include/readcfg.php` untuk baca field `api_mode`, `rest_port`, `rest_ssl` baru | `include/readcfg.php` | `[ ]` |
-| S1-013 | Update `include/config.php` format (tambah field baru, backward compatible) | `include/config.php` | `[ ]` |
-| S1-014 | Update `index.php` gunakan `api_factory.php` untuk inisialisasi `$API` | `index.php` | `[ ]` |
-| S1-015 | Tambah UI pilihan API Mode di settings | `settings/settings.php` | `[ ]` |
-| S1-016 | Buat `test/api_compat_test.php` | `test/api_compat_test.php` | `[ ]` |
+| S1-010 | Buat `lib/routeros_rest_api.class.php` | `lib/routeros_rest_api.class.php` | `[x]` |
+| S1-011 | Buat `lib/api_factory.php` (factory pattern untuk pilih API mode) | `lib/api_factory.php` | `[x]` |
+| S1-012 | Update `include/readcfg.php` untuk baca field `api_mode`, `rest_port`, `rest_ssl` baru | `include/readcfg.php` | `[x]` |
+| S1-013 | Update `include/config.php` format (tambah field baru, backward compatible) | `include/config.php` | `[x]` |
+| S1-014 | Update `index.php` gunakan `api_factory.php` untuk inisialisasi `$API` | `index.php` | `[x]` |
+| S1-015 | Tambah UI pilihan API Mode di settings | `settings/settings.php` | `[x]` |
+| S1-016 | Buat `test/api_compat_test.php` | `test/api_compat_test.php` | `[x]` |
 
 #### 🟡 SEDANG — Dokumentasi & DX
 
 | ID | Task | File Utama | Status |
 |---|---|---|---|
-| S1-017 | Update `README.md` dengan info versi baru, requirements, dan changelog | `README.md` | `[ ]` |
-| S1-018 | Buat `CHANGELOG.md` | `CHANGELOG.md` | `[ ]` |
-| S1-019 | Update `verson.txt` ke v3.21 (typo dipertahankan untuk backward compat) | `verson.txt` | `[ ]` |
+| S1-017 | Update `README.md` dengan info versi baru, requirements, dan changelog | `README.md` | `[x]` |
+| S1-018 | Buat `CHANGELOG.md` | `CHANGELOG.md` | `[x]` |
+| S1-019 | Update `verson.txt` ke v3.21 (typo dipertahankan untuk backward compat) | `verson.txt` | `[x]` |
 
 ---
 
@@ -91,26 +91,26 @@ Menambah fitur-fitur high-value yang dibutuhkan operator jaringan modern, khusus
 
 | ID | Task | File Utama | Status |
 |---|---|---|---|
-| S2-001 | Buat `dashboard/noc.php` — halaman grid semua router | `dashboard/noc.php` | `[ ]` |
-| S2-002 | Buat `dashboard/noc_fetch.php` — AJAX endpoint fetch status per-router | `dashboard/noc_fetch.php` | `[ ]` |
-| S2-003 | Implementasi parallel multi-curl untuk fetch semua router sekaligus | `dashboard/noc_fetch.php` | `[ ]` |
-| S2-004 | Tambah menu NOC di sidebar | `include/menu.php` | `[ ]` |
-| S2-005 | Routing NOC di `index.php` | `index.php` | `[ ]` |
-| S2-006 | Card component design per-router (status, CPU, RAM, users, uptime) | `dashboard/noc.php` | `[ ]` |
-| S2-007 | Color threshold system (green/yellow/red) berbasis konfigurasi | `dashboard/noc.php` | `[ ]` |
+| S2-001 | Buat `dashboard/noc.php` — halaman grid semua router | `dashboard/noc.php` | `[x]` |
+| S2-002 | Buat `dashboard/noc_fetch.php` — AJAX endpoint fetch status per-router | `dashboard/noc_fetch.php` | `[x]` |
+| S2-003 | Implementasi parallel browser-driven AJAX fetch per-router | `dashboard/noc.php` | `[x]` |
+| S2-004 | Tambah menu NOC di sidebar | `include/menu.php` | `[x]` |
+| S2-005 | Routing NOC di `admin.php` | `admin.php` | `[x]` |
+| S2-006 | Card component design per-router (status, CPU, RAM, users, uptime) | `dashboard/noc.php` | `[x]` |
+| S2-007 | Color threshold system (green/yellow/red) berbasis parameter | `dashboard/noc.php` | `[x]` |
 
 #### 🟠 Bandwidth/QoS Manager
 
 | ID | Task | File Utama | Status |
 |---|---|---|---|
-| S2-008 | Buat `qos/` directory | `qos/` | `[ ]` |
-| S2-009 | `qos/simplequeue.php` — list Simple Queue | `qos/simplequeue.php` | `[ ]` |
-| S2-010 | `qos/addqueue.php` — form tambah Simple Queue | `qos/addqueue.php` | `[ ]` |
-| S2-011 | `process/addqueue.php` — proses tambah queue | `process/addqueue.php` | `[ ]` |
-| S2-012 | `process/removequeue.php` — proses hapus queue | `process/removequeue.php` | `[ ]` |
-| S2-013 | `qos/bandwidthprofile.php` — preset paket bandwidth | `qos/bandwidthprofile.php` | `[ ]` |
-| S2-014 | Routing di `index.php` | `index.php` | `[ ]` |
-| S2-015 | Tambah menu QoS di sidebar | `include/menu.php` | `[ ]` |
+| S2-008 | Buat `qos/` directory | `qos/` | `[x]` |
+| S2-009 | `qos/queues.php` — list Simple Queue | `qos/queues.php` | `[x]` |
+| S2-010 | `qos/addqueue.php` — form tambah Simple Queue | `qos/addqueue.php` | `[x]` |
+| S2-011 | Gabungkan handling logic di `qos/addqueue.php` & `qos/queuebyname.php` | `qos/` | `[x]` |
+| S2-012 | `process/removequeue.php` — proses hapus queue | `process/removequeue.php` | `[x]` |
+| S2-013 | Dukungan parent queue dan preset limit dinamis | `qos/` | `[x]` |
+| S2-014 | Routing di `index.php` | `index.php` | `[x]` |
+| S2-015 | Tambah menu QoS di sidebar | `include/menu.php` | `[x]` |
 
 ---
 
@@ -129,21 +129,22 @@ Modernisasi tampilan dan menambah integrasi notifikasi untuk workflow operator.
 
 | ID | Task | File Utama | Status |
 |---|---|---|---|
-| S3-001 | Implementasi CSS variables untuk theming | `css/` | `[ ]` |
-| S3-002 | Dark mode toggle dengan CSS variables | `css/`, `js/mikhmon.js` | `[ ]` |
-| S3-003 | Upgrade Font Awesome 4.x → 6.x via CDN (update semua referensi ikon) | `include/headhtml.php` | `[ ]` |
-| S3-004 | Mobile responsive improvements di grid/table | `css/` | `[ ]` |
-| S3-005 | Upgrade Highcharts ke versi terbaru via CDN | `include/headhtml.php` | `[ ]` |
+| S3-001 | Implementasi CSS variables untuk theming | `css/` | `[x]` |
+| S3-002 | Dark mode toggle dengan CSS variables | `css/`, `js/mikhmon.js` | `[x]` |
+| S3-003 | Upgrade Font Awesome 4.x → 6.x via CDN (update semua referensi ikon) | `include/headhtml.php` | `[x]` |
+| S3-004 | Mobile responsive improvements di grid/table | `css/` | `[x]` |
+| S3-005 | Upgrade Highcharts ke versi terbaru via CDN | `include/headhtml.php` | `[x]` |
 
-#### 🟡 Notifikasi (Fork Only — tidak di-PR ke upstream)
+#### 🟡 Notifikasi & Anti-Ban (Fork Only — tidak di-PR ke upstream)
 
 | ID | Task | File Utama | Status |
 |---|---|---|---|
-| S3-006 | `lib/notification.php` — abstract notification handler | `lib/notification.php` | `[ ]` |
-| S3-007 | Telegram Bot integration | `lib/telegram_notif.php` | `[ ]` |
-| S3-008 | WhatsApp API integration (Fonnte) | `lib/wa_notif.php` | `[ ]` |
-| S3-009 | Settings UI untuk konfigurasi notifikasi | `settings/notif_settings.php` | `[ ]` |
-| S3-010 | Event trigger: user baru, router down, CPU tinggi | Multiple files | `[ ]` |
+| S3-006 | `lib/notification.php` — abstract notification handler | `lib/notification.php` | `[x]` |
+| S3-007 | Telegram Bot integration | `lib/telegram_notif.php` | `[x]` |
+| S3-008 | WhatsApp Baileys Multi-Device integration | `wa-gateway/` | `[x]` |
+| S3-009 | Settings UI untuk konfigurasi notifikasi | `settings/notif_settings.php` | `[x]` |
+| S3-010 | Event trigger: user baru, router down, CPU tinggi | Multiple files | `[x]` |
+| S3-011 | WhatsApp Anti-Ban Protection suite (queue, rate limits, warm-up, circuit breaker, number check) | `wa-gateway/index.js`, `settings/notif_settings.php` | `[x]` |
 
 ---
 
