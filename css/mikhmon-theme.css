@@ -1,0 +1,198 @@
+/* Mikhmon Modernized Theme & Dark Mode Layer (v3.23) */
+
+:root {
+  --primary-color: #008bc9;
+  --primary-hover: #1ea4e1;
+  --bg-color: #e9ebee;
+  --text-color: #3e3e3e;
+  --text-muted: #73818f;
+  --card-bg: #ffffff;
+  --border-color: #c1c1c1;
+  --navbar-bg: #008bc9;
+  --sidenav-bg: #f5f5f5;
+  --sidenav-hover: #ececec;
+  --active-bg: #e2e2e2;
+  --input-bg: #e9ebee;
+  --input-border: #c1c1c1;
+  --table-hover: #eeeeee;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+  --transition-speed: 0.25s;
+}
+
+/* Dark Mode Overrides */
+body[data-theme="dark"] {
+  --bg-color: #0f111a;
+  --text-color: #cbd5e1;
+  --text-muted: #94a3b8;
+  --card-bg: #1e293b;
+  --border-color: #334155;
+  --navbar-bg: #0f172a;
+  --sidenav-bg: #0f172a;
+  --sidenav-hover: #1e293b;
+  --active-bg: #334155;
+  --input-bg: #0f172a;
+  --input-border: #334155;
+  --table-hover: #1e293b;
+}
+
+/* Base style enhancements */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+  transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+/* Theme overrides using variables/specificity */
+body[data-theme="dark"] .card,
+body[data-theme="dark"] .box {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: var(--shadow-sm);
+}
+
+body[data-theme="dark"] .card-header,
+body[data-theme="dark"] .box-bordered {
+  background-color: #111827 !important;
+  border-bottom-color: var(--border-color) !important;
+  color: var(--text-color) !important;
+}
+
+body[data-theme="dark"] .navbar {
+  background-color: var(--navbar-bg) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+body[data-theme="dark"] .ses,
+body[data-theme="dark"] .navbar-hover {
+  background-color: var(--navbar-bg) !important;
+}
+
+body[data-theme="dark"] .navbar-hover:hover {
+  background-color: var(--sidenav-hover) !important;
+}
+
+body[data-theme="dark"] .sidenav {
+  background-color: var(--sidenav-bg) !important;
+  border-right-color: var(--border-color) !important;
+}
+
+body[data-theme="dark"] .sidenav a,
+body[data-theme="dark"] .dropdown-btn {
+  color: var(--text-color) !important;
+}
+
+body[data-theme="dark"] .sidenav a:hover,
+body[data-theme="dark"] .dropdown-btn:hover {
+  background-color: var(--sidenav-hover) !important;
+  color: #ffffff !important;
+}
+
+body[data-theme="dark"] .active {
+  background-color: var(--active-bg) !important;
+  color: #38bdf8 !important;
+}
+
+body[data-theme="dark"] .table {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+}
+
+body[data-theme="dark"] .table td,
+body[data-theme="dark"] .table th,
+body[data-theme="dark"] .table a {
+  color: var(--text-color) !important;
+}
+
+body[data-theme="dark"] .table-bordered td,
+body[data-theme="dark"] .table-bordered th {
+  border-color: var(--border-color) !important;
+}
+
+body[data-theme="dark"] .table-hover:hover tbody tr:hover {
+  background-color: var(--table-hover) !important;
+}
+
+body[data-theme="dark"] .form-control,
+body[data-theme="dark"] .group-item {
+  background-color: var(--input-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--input-border) !important;
+}
+
+body[data-theme="dark"] .group-item::placeholder,
+body[data-theme="dark"] .form-control::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 0.8;
+}
+
+body[data-theme="dark"] .modal-window>div {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+body[data-theme="dark"] .modal-close {
+  color: #ffffff !important;
+}
+
+/* Custom Scrollbar in Dark Mode */
+body[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--bg-color);
+  border-color: var(--border-color);
+}
+
+body[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-color: var(--border-color);
+}
+
+body[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Modern fonts (Inter) local configuration */
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/inter/inter-latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/inter/inter-latin-400-normal.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/inter/inter-latin-700-normal.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Mobile responsive improvements */
+@media (max-width: 768px) {
+  .noc-card-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .noc-router-card {
+    width: 100% !important;
+    margin: 5px 0 !important;
+  }
+  .qos-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+}
