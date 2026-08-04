@@ -1,36 +1,25 @@
-## 🌿 Development Branch
+## Branch `custom-v3-for-ros7`
 
-Repository ini mengikuti source asli **Mikhmon V3** sebagai acuan.
+Branch ini merupakan branch pengembangan yang berfokus pada kompatibilitas **Mikhmon V3** dengan **MikroTik RouterOS v7**.
 
-Untuk memudahkan pengembangan dan menjaga agar branch utama tetap bersih, tersedia branch khusus:
+### Changelog
 
-### `custom-v3-for-ros7`
+#### Initial Update
 
-Branch ini digunakan sebagai **branch pengembangan** untuk penyesuaian dan penambahan fitur yang berfokus pada **RouterOS v7**, seperti:
+##### Fixed
 
-* Penyesuaian kompatibilitas RouterOS v7.
-* Perbaikan bug.
-* Optimasi performa.
-* Penambahan fitur baru.
-* Modernisasi tampilan dan pengalaman pengguna (UI/UX).
-* Eksperimen fitur yang belum tersedia pada Mikhmon versi asli.
+* Memperbaiki bug **Hotspot User** yang tidak terputus (expired) secara otomatis akibat perbedaan format tanggal antara **RouterOS v6** dan **RouterOS v7**.
+* Menyesuaikan script scheduler dan user profile agar dapat membaca format tanggal yang digunakan pada RouterOS v7.
 
-Jika ingin berkontribusi atau membuat perubahan, gunakan branch ini sebagai dasar (base branch), **bukan** `master`.
+##### Important
 
-Contoh:
+* Jika sebelumnya sudah memiliki **User Profile**, **wajib melakukan update/simpan ulang seluruh User Profile** melalui Mikhmon untuk melakukan override konfigurasi dan scheduler ke versi yang kompatibel dengan RouterOS v7.
+* User Profile yang tidak diperbarui masih menggunakan script lama sehingga mekanisme expired dapat berjalan tidak semestinya.
 
-```bash
-git clone https://github.com/rzedemp/mikhmonv3.git
-cd mikhmonv3
-git checkout custom-v3-for-ros7
-```
+##### Known Issues
 
-atau langsung clone branch tersebut:
+* Pada tahap awal ini, perbaikan hanya difokuskan pada fitur yang menjadi **blocker**, terutama proses:
 
-```bash
-git clone -b custom-v3-for-ros7 https://github.com/rzedemp/mikhmonv3.git
-```
-
-> **Catatan**
->
-> Branch `master` dipertahankan sedekat mungkin dengan repository asli sebagai referensi. Seluruh pengembangan aktif dilakukan pada branch `custom-v3-for-ros7`.
+  * Create
+  * Update
+* Perbaikan pada halaman lain yang hanya memengaruhi tampilan (view) atau fitur non-kritis akan dilakukan secara bertahap pada update berikutnya.
