@@ -60,7 +60,7 @@ if (!isset($_SESSION["mikhmon"])) {
 
     $parent = ($_POST['parent']);
     
-    $record = '; :local mac $"mac-address"; :local time [/system clock get time ]; /system script add name="$date-|-$time-|-$user-|-'.$price.'-|-$address-|-$mac-|-' . $validity . '-|-'.$name.'-|-$comment" owner="$month$year" source="$date" comment="mikhmon"';
+    $record = '; :local mac $"mac-address"; :local date [ /system clock get date ]; :local year [:pick $date 0 4]; :local month [:pick $date 5 7]; :local time [/system clock get time ]; /system script add name="$date-|-$time-|-$user-|-'.$price.'-|-$address-|-$mac-|-' . $validity . '-|-'.$name.'-|-$comment" owner="$month$year" source="$date" comment="mikhmon"';
     
     $onlogin = ':put (",'.$expmode.',' . $price . ',' . $validity . ','.$sprice.',,' . $getlock . ',"); {:local comment [ /ip hotspot user get [/ip hotspot user find where name="$user"] comment]; :local ucode [:pick $comment 0 2]; :if ($ucode = "vc" or $ucode = "up" or $comment = "") do={ :local date [ /system clock get date ]; :local year [:pick $date 0 4]; :local month [:pick $date 5 7]; /sys sch add name="$user" disable=no start-date=$date interval="' . $validity . '"; :delay 5s; :local exp [ /sys sch get [ /sys sch find where name="$user" ] next-run]; :local getxp [:len $exp]; :if ($getxp = 15) do={ :local d [:pick $exp 0 2]; :local t [:pick $exp 7 16]; :local exp ("$year-$month-$d $t"); /ip hotspot user set comment="$exp" [find where name="$user"];}; :if ($getxp = 8) do={ /ip hotspot user set comment="$date $exp" [find where name="$user"];}; :if ($getxp > 15) do={ /ip hotspot user set comment="$exp" [find where name="$user"];}; :delay 5s; /sys sch remove [find where name="$user"]};';
     
