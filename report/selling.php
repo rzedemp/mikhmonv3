@@ -21,7 +21,20 @@ error_reporting(0);
 if (!isset($_SESSION["mikhmon"])) {
 	header("Location:../admin.php?id=login");
 } else {
-
+	$constMonths = [
+		'jan' => '01',
+    'feb' => '02',
+    'mar' => '03',
+    'apr' => '04',
+    'may' => '05',
+    'jun' => '06',
+    'jul' => '07',
+    'aug' => '08',
+    'sep' => '09',
+    'oct' => '10',
+    'nov' => '11',
+    'dec' => '12'
+	];
 	$idhr = $_GET['idhr'];
 	$idbl = $_GET['idbl'];
 	$idbl2 = explode("/",$idhr)[0].explode("/",$idhr)[2];
@@ -44,8 +57,10 @@ if (!isset($_SESSION["mikhmon"])) {
 	if (isset($remdata)) {
 		if (strlen($idhr) > "0") {
 			if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
+				$tempExplodedDate = explode('/', strtolower($idhr));
+				$currentDate = ($tempExplodedDate[2] . '-' . $constMonths[$tempExplodedDate[0]] . '-' . $tempExplodedDate[1]);
 				$API->write('/system/script/print', false);
-				$API->write('?source=' . $idhr . '', false);
+				$API->write('?source=' . $currentDate . '', false);
 				$API->write('=.proplist=.id');
 				$ARREMD = $API->read();
 				for ($i = 0; $i < count($ARREMD); $i++) {
@@ -57,8 +72,11 @@ if (!isset($_SESSION["mikhmon"])) {
 			}
 		} elseif (strlen($idbl) > "0") {
 			if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
+				$tempMonth = substr($idbl, 0, 3);
+				$tempYear = substr($idbl, -4);
+				$currentDate = ($constMonths[$tempMonth] . $tempYear);
 				$API->write('/system/script/print', false);
-				$API->write('?owner=' . $idbl . '', false);
+				$API->write('?owner=' . $currentDate . '', false);
 				$API->write('=.proplist=.id');
 				$ARREMD = $API->read();
 				for ($i = 0; $i < count($ARREMD); $i++) {
@@ -80,8 +98,10 @@ if (!isset($_SESSION["mikhmon"])) {
 	}
 	if (strlen($idhr) > "0") {
 		if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
+			$tempExplodedDate = explode('/', strtolower($idhr));
+			$currentDate = ($tempExplodedDate[2] . '-' . $constMonths[$tempExplodedDate[0]] . '-' . $tempExplodedDate[1]);
 			$getData = $API->comm("/system/script/print", array(
-				"?source" => "$idhr",
+				"?source" => "$currentDate",
 			));
 			$TotalReg = count($getData);
 		}
@@ -90,8 +110,11 @@ if (!isset($_SESSION["mikhmon"])) {
 		$shd = "inline-block";
 	} elseif (strlen($idbl) > "0") {
 		if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
+			$tempMonth = substr($idbl, 0, 3);
+			$tempYear = substr($idbl, -4);
+			$currentDate = ($constMonths[$tempMonth] . $tempYear);
 			$getData = $API->comm("/system/script/print", array(
-				"?owner" => "$idbl",
+				"?owner" => "$currentDate",
 			));
 			$TotalReg = count($getData);
 		}
@@ -110,8 +133,11 @@ if (!isset($_SESSION["mikhmon"])) {
 		$shd = "none";
 	} elseif (strlen($idbl) > "0" ) {
 		if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
+			$tempMonth = substr($idbl, 0, 3);
+			$tempYear = substr($idbl, -4);
+			$currentDate = ($constMonths[$tempMonth] . $tempYear);
 			$getData = $API->comm("/system/script/print", array(
-				"?owner" => "$idbl",
+				"?owner" => "$currentDate",
 			));
 			$TotalReg = count($getData);
 		}
